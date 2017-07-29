@@ -4,12 +4,13 @@ import java.util.*;
 
 public class Solution {
 
+    static Heap heap = new SortingHeap(100);
+
     public static void main(String[] args) {
         Scanner in = new Scanner(String.join(" ", args));
         int n = in.nextInt();
         int[] a = new int[n];
 
-        Heap heap = new SortedHeap(n);
         for(int a_i=0; a_i < n; a_i++){
             a[a_i] = in.nextInt();
             heap.add(a[a_i]);
@@ -17,14 +18,15 @@ public class Solution {
         }
     }
 
-    static class SortedHeap implements Heap {
+    static class SortingHeap implements Heap {
         int[] data;
         int size;
 
-        public SortedHeap(int length) {
+        public SortingHeap(int length) {
             this.data = new int[length];
         }
-        public SortedHeap(int[] data, int size) {
+
+        public SortingHeap(int[] data, int size) {
             this.data = Arrays.copyOf(data, data.length);
             this.size = size;
         }
@@ -113,7 +115,7 @@ public class Solution {
 
         @Override
         public double getMedian() {
-            Heap heap = new SortedHeap(data, size);
+            Heap heap = new SortingHeap(data, size);
             int prev = 0;
             int cur = heap.pop();
             for (int i = 0; i < size/2; i++) {
@@ -139,5 +141,53 @@ public class Solution {
         void add(int val);
         double getMedian();
         int pop();
+    }
+
+    static class MinsMaxsHeaps implements Heap {
+        private PriorityQueue<Integer> maxs = new PriorityQueue<>(Comparator.naturalOrder());
+        private PriorityQueue<Integer> mins = new PriorityQueue<>(Comparator.reverseOrder());
+
+        @Override
+        public void add(int val) {
+            if (!maxs.isEmpty() && maxs.peek() < val) {
+                maxs.add(val);
+            } else if (!mins.isEmpty() && mins.peek() > val) {
+                mins.add(val);
+            } else {
+                mins.add(val);
+            }
+
+            if (mins.size() - maxs.size() > 1) {
+                while (mins.size() > maxs.size() + 1) {
+                    maxs.add(mins.poll());
+                }
+            } else if (maxs.size() > mins.size()) {
+                while (maxs.size() > mins.size()) {
+                    mins.add(maxs.poll());
+                }
+            }
+        }
+
+        @Override
+        public double getMedian() {
+            if (isSizeEven()) {
+                return (double) (mins.peek() + maxs.peek()) / 2;
+            } else {
+                return mins.peek();
+            }
+        }
+
+        private boolean isSizeEven() {
+            return getSize() % 2 == 0;
+        }
+
+        private int getSize() {
+            return maxs.size() + mins.size();
+        }
+
+        @Override
+        public int pop() {
+            throw new UnsupportedOperationException();
+        }
     }
 }
