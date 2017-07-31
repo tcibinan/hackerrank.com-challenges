@@ -26,8 +26,8 @@ public class Solution {
 
             Edge edge = (Edge) o;
 
-            if (idA != edge.idA) return false;
-            return idB == edge.idB;
+            if (Math.min(idA, idB) != Math.min(edge.idA, edge.idB)) return false;
+            return Math.max(idA, idB) == Math.max(edge.idA, edge.idB);
         }
 
         @Override
@@ -61,8 +61,9 @@ public class Solution {
 
             findShortestReach(queue, new HashSet<>(size), minPaths);
 
-            System.arraycopy(minPaths, startId+1, minPaths, startId, size-startId-1);
-            return Arrays.copyOf(minPaths, size-1);
+            return minPaths;
+//            System.arraycopy(minPaths, startId+1, minPaths, startId, size-startId-1);
+//            return Arrays.copyOf(minPaths, size-1);
         }
 
         private void findShortestReach(Queue<Path> queue, Set<Integer> visited, int[] minPaths) {
