@@ -1,15 +1,12 @@
 package shortestreach;
 
-import java.io.*;
 import java.util.*;
-import java.text.*;
-import java.math.*;
-import java.util.regex.*;
 
 public class Solution {
     public static int[] solution;
 
     public static class Edge {
+        public static final int LENGTH = 6;
         final int idA;
         final int idB;
 
@@ -44,11 +41,11 @@ public class Solution {
     public static class Graph {
 
         private final int size;
-        private final Set<Edge> edges = new HashSet<>();
-        private int EDGE_LENGTH = 6;
+        private final Set<Edge> edges;
 
         public Graph(int size) {
             this.size = size;
+            this.edges = new HashSet<>(size);
         }
 
         public void addEdge(int first, int second) {
@@ -56,32 +53,32 @@ public class Solution {
         }
 
         public int[] shortestReach(int startId) { // 0 indexed
-            Set<Integer> visited = new HashSet<>();
             int[] minPaths = new int[size];
+            Arrays.fill(minPaths, -1);
+
             Queue<Path> queue = new LinkedList<>();
-            queue.add(Path.from(startId).withLength(0));
-            findShortestReach(queue, visited, minPaths);
-            int[] result = new int[size-1];
-            System.arraycopy(minPaths, 0, result, 0, startId);
-            System.arraycopy(minPaths, startId+1, result, startId, size-startId-1);
-            return Arrays.stream(result)
-                    .map((i) -> i == 0 ? -1 : i)
-                    .toArray();
+            queue.add(Path.from(startId).atStep(0));
+
+            findShortestReach(queue, new HashSet<>(size), minPaths);
+
+            System.arraycopy(minPaths, startId+1, minPaths, startId, size-startId-1);
+            return Arrays.copyOf(minPaths, size-1);
         }
 
         private void findShortestReach(Queue<Path> queue, Set<Integer> visited, int[] minPaths) {
             if (!queue.isEmpty()) {
                 Path path = queue.poll();
-                int length = path.getLength();
-                Integer nodeId = path.getNode();
+                int step = path.getStep();
+                int nodeId = path.getNode();
+
                 if (!visited.contains(nodeId)) {
                     visited.add(nodeId);
-                    if (minPaths[nodeId] > length * EDGE_LENGTH || minPaths[nodeId] == 0) {
-                        minPaths[nodeId] = length * EDGE_LENGTH;
+                    if (minPaths[nodeId] > step * Edge.LENGTH || minPaths[nodeId] == -1) {
+                        minPaths[nodeId] = step * Edge.LENGTH;
                     }
                     for (int i = 0; i < size; i++) {
                         if (edges.contains(Edge.of(nodeId, i))) {
-                            queue.add(Path.from(i).withLength(length + 1));
+                            queue.add(Path.from(i).atStep(step + 1));
                         }
                     }
                 }
@@ -91,7 +88,7 @@ public class Solution {
 
         private static class Path {
             private int node;
-            private int length;
+            private int step;
 
             private Path(int node) {
                 this.node = node;
@@ -101,14 +98,13 @@ public class Solution {
                 return new Path(node);
             }
 
-
-            public Path withLength(int length) {
-                this.length = length;
+            public Path atStep(int step) {
+                this.step = step;
                 return this;
             }
 
-            public int getLength() {
-                return length;
+            public int getStep() {
+                return step;
             }
 
             public int getNode() {
