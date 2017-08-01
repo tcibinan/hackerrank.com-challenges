@@ -21,7 +21,7 @@ public class Solution {
     }
 
     private static long getCountOfCases(int n, int[] coins) {
-        int[] dynamic = new int[n + 1];
+        long[] dynamic = new long[n + 1];
         dynamic[0] = 1;
 
         Arrays.stream(coins)
