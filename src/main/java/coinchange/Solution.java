@@ -11,7 +11,7 @@ public class Solution {
         int n = in.nextInt();
         int m = in.nextInt();
         int coins[] = new int[m];
-        for(int coins_i=0; coins_i < m; coins_i++){
+        for (int coins_i = 0; coins_i < m; coins_i++) {
             coins[coins_i] = in.nextInt();
         }
 
@@ -21,23 +21,18 @@ public class Solution {
     }
 
     private static long getCountOfCases(int n, int[] coins) {
-        Arrays.sort(coins);
-        return getCountOfCasesRecursively(0, n, 0, coins);
+        int[] dynamic = new int[n + 1];
+        dynamic[0] = 1;
+
+        Arrays.stream(coins)
+                .forEach((coin) -> {
+                    for (int sum = coin; sum < dynamic.length; sum++) {
+                        dynamic[sum] += dynamic[sum - coin];
+                    }
+                });
+
+        return dynamic[n];
     }
 
-    private static long getCountOfCasesRecursively(int sum, int top, int coinIndex, int[] coins) {
-        if (sum == top) {
-            return 1;
-        } else if (sum > top) {
-            return 0;
-        } else {
-            int counts = 0;
 
-            for (int i = coinIndex; i < coins.length; i++) {
-                counts += getCountOfCasesRecursively(sum+coins[i], top, i, coins);
-            }
-
-            return counts;
-        }
-    }
 }

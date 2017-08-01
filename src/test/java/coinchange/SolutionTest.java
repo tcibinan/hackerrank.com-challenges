@@ -32,4 +32,22 @@ class SolutionTest {
         assertThat(Solution.solution, is(3l));
     }
 
+    @Test
+    void test5() {
+        Solution.main("0 3 1 2 3".split(" "));
+        assertThat(Solution.solution, is(1l));
+    }
+
+    @Test
+    void test6() {
+        Solution.main("5 0".split(" "));
+        assertThat(Solution.solution, is(0l));
+    }
+
+    @Test
+    void test7() {
+        Solution.main("5 2 6 7".split(" "));
+        assertThat(Solution.solution, is(0l));
+    }
+
 }
