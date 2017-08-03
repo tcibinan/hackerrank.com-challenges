@@ -5,7 +5,6 @@ import java.util.*;
 public class Solution {
 
     static int solution;
-    private static int smallBitsSize = 50;
 
     public static void main(String[] args) {
         Scanner in = new Scanner(String.join(" ", args));
@@ -20,35 +19,40 @@ public class Solution {
     }
 
     private static int calculate(int[] a) {
-        long smallBits = ~0;
-        long bigBits = ~0;
+        LonelyIntegerFinder lif = new LonelyIntegerFinder();
+        Arrays.stream(a).forEach(lif::consume);
 
-        for (int i = 0; i < a.length; i++) {
-            if (a[i] > smallBitsSize) {
-                int bit = a[i] - smallBitsSize;
+        return lif.getLonelyInteger();
+    }
+
+    private static class LonelyIntegerFinder {
+        private final static int smallBitsSize = 50;
+        private long smallBits = ~0;
+        private long bigBits = ~0;
+
+        public void consume(int num) {
+            if (num > smallBitsSize) {
+                int bit = num - smallBitsSize;
                 bigBits ^= (long) 1 << bit;
             } else {
-                smallBits ^= (long) 1 << a[i];
+                smallBits ^= (long) 1 << num;
             }
         }
 
-        smallBits = ~smallBits;
-        bigBits = ~bigBits;
+        public int getLonelyInteger() {
+            smallBits = ~smallBits;
+            bigBits = ~bigBits;
 
-        if (smallBits != 0) {
-            return getNum(smallBits);
-        } else {
-            return getNum(bigBits) + smallBitsSize;
+            if (smallBits != 0) {
+                return getIntegerByMarkedBit(smallBits);
+            } else {
+                return getIntegerByMarkedBit(bigBits) + smallBitsSize;
+            }
         }
-    }
 
-    private static int getNum(long bits) {
-        int num = 0;
-        while (bits != 1) {
-            bits >>= 1;
-            num++;
+        private int getIntegerByMarkedBit(long bits) {
+            return Long.numberOfTrailingZeros(bits);
         }
-        return num;
     }
 }
 
