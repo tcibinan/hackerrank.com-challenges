@@ -41,29 +41,23 @@ public class Solution {
     }
 
     private static void merge(int[] arr, int[] temp, int start, int middle, int finish) {
-        int leftStart = start;
-        int leftEnd = middle;
-        int rightStart = middle+1;
-        int rightEnd = finish;
 
-        int left = leftStart;
-        int right = rightStart;
-        int index = leftStart;
+        int left = start;
+        int right = middle+1;
+        int index = start;
 
-        while (left <= leftEnd && right <= rightEnd) {
+        while (left <= middle && right <= finish) {
             if (arr[left] <= arr[right]) {
-                temp[index] = arr[left];
-                left++;
+                temp[index] = arr[left++];
             } else {
-                temp[index] = arr[right];
-                right++;
-                swapsCount += leftEnd - left + 1;
+                temp[index] = arr[right++];
+                swapsCount += middle - left + 1;
             }
             index++;
         }
 
-        System.arraycopy(arr, left, temp, index, leftEnd - left + 1);
-        System.arraycopy(arr, right, temp, index, rightEnd - right + 1);
-        System.arraycopy(temp, leftStart, arr, leftStart, rightEnd - leftStart + 1);
+        System.arraycopy(arr, left, temp, index, middle - left + 1);
+        System.arraycopy(arr, right, temp, index, finish - right + 1);
+        System.arraycopy(temp, start, arr, start, finish - start + 1);
     }
 }
