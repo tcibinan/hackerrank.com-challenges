@@ -32,7 +32,7 @@ public class Solution {
 
     static class SetContacts implements Contacts {
 
-        Set<String> set = new HashSet<>();
+        private Set<String> set = new HashSet<>();
 
         public void addContact(String contact) {
             set.add(contact);
@@ -54,7 +54,7 @@ public class Solution {
 
     static class TreeContacts implements Contacts {
 
-        Node root = new Node(false);
+        private Node root = new Node(false);
 
         public void addContact(String contact) {
             addContact(contact, root);
@@ -86,26 +86,25 @@ public class Solution {
             return findContacts(contact, root);
         }
 
-        int findContacts(String contact, Node root) {
+        private int findContacts(String contact, Node root) {
             if (!contact.isEmpty()) {
                 Node node = root.letters[indexOf(contact.charAt(0))];
                 if (node == null) {
                     return 0;
                 }
-                if (contact.length() == 1) {
-                    return findContacts("", node);
-                }
-                return findContacts(contact.substring(1), node);
+                return contact.length() == 1
+                        ? node.count
+                        : findContacts(contact.substring(1), node);
             } else {
                 return root.count;
             }
         }
 
-        public static int indexOf(char c) {
+        private static int indexOf(char c) {
             return c - 'a';
         }
 
-        static class Node {
+        private static class Node {
             boolean end;
             int count;
             Node[] letters = new Node[26];
