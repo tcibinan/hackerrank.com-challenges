@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Solution {
 
-    static Heap heap = new SortingHeap(100);
+    static Heap heap = new MinsMaxsHeaps();
 
     public static void main(String[] args) {
         Scanner in = new Scanner(String.join(" ", args));
@@ -16,6 +16,12 @@ public class Solution {
             heap.add(a[a_i]);
             System.out.println(heap.getMedian());
         }
+    }
+
+    interface Heap {
+        void add(int val);
+        double getMedian();
+        int pop();
     }
 
     static class SortingHeap implements Heap {
@@ -137,12 +143,6 @@ public class Solution {
 
     }
 
-    interface Heap {
-        void add(int val);
-        double getMedian();
-        int pop();
-    }
-
     static class MinsMaxsHeaps implements Heap {
         private PriorityQueue<Integer> maxs = new PriorityQueue<>(Comparator.naturalOrder());
         private PriorityQueue<Integer> mins = new PriorityQueue<>(Comparator.reverseOrder());
@@ -151,20 +151,14 @@ public class Solution {
         public void add(int val) {
             if (!maxs.isEmpty() && maxs.peek() < val) {
                 maxs.add(val);
-            } else if (!mins.isEmpty() && mins.peek() > val) {
-                mins.add(val);
             } else {
                 mins.add(val);
             }
 
             if (mins.size() - maxs.size() > 1) {
-                while (mins.size() > maxs.size() + 1) {
-                    maxs.add(mins.poll());
-                }
+                maxs.add(mins.poll());
             } else if (maxs.size() > mins.size()) {
-                while (maxs.size() > mins.size()) {
-                    mins.add(maxs.poll());
-                }
+                mins.add(maxs.poll());
             }
         }
 
