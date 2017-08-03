@@ -26,10 +26,6 @@ public class Solution {
     private static void calculate(int money, int[] costs) {
         Map<Integer, Integer> map = new HashMap<>();
         for (int i = 0; i < costs.length; i++) {
-            map.put(costs[i], i);
-        }
-
-        for (int i = 0; i < costs.length; i++) {
             int diff = money - costs[i];
             if (map.containsKey(diff) && map.get(diff) != i) {
                 int j = map.get(diff);
@@ -37,6 +33,7 @@ public class Solution {
                 iceCreamB = Math.max(i, j) + 1;
                 return;
             }
+            map.put(costs[i], i);
         }
 
         throw new RuntimeException("No such pair of flavors");
