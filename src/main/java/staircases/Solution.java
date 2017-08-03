@@ -5,6 +5,7 @@ import java.util.*;
 import java.text.*;
 import java.math.*;
 import java.util.regex.*;
+import java.util.stream.IntStream;
 
 public class Solution {
 
@@ -31,10 +32,12 @@ public class Solution {
         if (start == finish) {
             return 1;
         }
+
         if (buff[start] == -1) {
-            buff[start] = countStairCasesVariants(start + 1, finish)
-                    + countStairCasesVariants(start + 2, finish)
-                    + countStairCasesVariants(start + 3, finish);
+            buff[start] = 0;
+            for (int i = 1; i < 4; i++) {
+                buff[start] += countStairCasesVariants(start + i, finish);
+            }
         }
         return buff[start];
     }
