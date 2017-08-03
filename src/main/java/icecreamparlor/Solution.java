@@ -1,6 +1,7 @@
 package icecreamparlor;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class Solution {
 
@@ -23,50 +24,21 @@ public class Solution {
     }
 
     private static void calculate(int money, int[] costs) {
-        Map<Integer, List<Integer>> map = new HashMap<>();
+        Map<Integer, Integer> map = new HashMap<>();
         for (int i = 0; i < costs.length; i++) {
-            if (map.containsKey(costs[i])) {
-                map.get(costs[i]).add(i);
-            } else {
-                ArrayList<Integer> value = new ArrayList<>();
-                value.add(i);
-                map.put(costs[i], value);
-            }
+            map.put(costs[i], i);
         }
 
         for (int i = 0; i < costs.length; i++) {
             int diff = money - costs[i];
-            if (map.containsKey(diff)) {
-                List<Integer> list = map.get(diff);
-                if (list.size() == 1 && !list.get(0).equals(i)) {
-                    iceCreamA = i;
-                    iceCreamB = list.get(0);
-                    fixIceCreams();
-                    return;
-                } else if (list.size() > 1) {
-                    iceCreamA = i;
-                    if (list.get(0).equals(i)) {
-                        iceCreamB = list.get(1);
-                    } else {
-                        iceCreamB = list.get(0);
-                    }
-                    fixIceCreams();
-                    return;
-                }
+            if (map.containsKey(diff) && map.get(diff) != i) {
+                int j = map.get(diff);
+                iceCreamA = Math.min(i, j) + 1;
+                iceCreamB = Math.max(i, j) + 1;
+                return;
             }
         }
 
         throw new RuntimeException("No such pair of flavors");
-    }
-
-    private static void fixIceCreams() {
-        if (iceCreamA > iceCreamB) {
-            int temp = iceCreamA;
-            iceCreamA = iceCreamB;
-            iceCreamB = temp;
-        }
-
-        iceCreamA++;
-        iceCreamB++;
     }
 }
