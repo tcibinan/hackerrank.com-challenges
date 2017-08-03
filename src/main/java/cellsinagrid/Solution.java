@@ -1,6 +1,7 @@
 package cellsinagrid;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class Solution {
 
@@ -28,10 +29,10 @@ public class Solution {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 Point point = Point.of(i, j);
-                if (!visited.contains(point) && grid[i][j] == 1) {
+                if (!visited.contains(point) && isPointFilled(grid, point)) {
                     Region curRegion = new Region();
                     findRegion(grid, point, curRegion, visited, grid.length, grid[i].length);
-                    if (curRegion.size > maxRegion.size) {
+                    if (curRegion.getSize() > maxRegion.getSize()) {
                         maxRegion = curRegion;
                     }
                 }
@@ -52,14 +53,11 @@ public class Solution {
         region.includePoint();
         visited.add(point);
 
-        findRegion(grid, Point.of(point.x-1, point.y-1), region, visited, sizeX, sizeY);
-        findRegion(grid, Point.of(point.x, point.y-1), region, visited, sizeX, sizeY);
-        findRegion(grid, Point.of(point.x+1, point.y-1), region, visited, sizeX, sizeY);
-        findRegion(grid, Point.of(point.x+1, point.y), region, visited, sizeX, sizeY);
-        findRegion(grid, Point.of(point.x+1, point.y+1), region, visited, sizeX, sizeY);
-        findRegion(grid, Point.of(point.x, point.y+1), region, visited, sizeX, sizeY);
-        findRegion(grid, Point.of(point.x-1, point.y+1), region, visited, sizeX, sizeY);
-        findRegion(grid, Point.of(point.x-1, point.y), region, visited, sizeX, sizeY);
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                findRegion(grid, Point.of(point.x+i, point.y+j), region, visited, sizeX, sizeY);
+            }
+        }
     }
 
     private static boolean isPointFilled(int[][] grid, Point point) {
@@ -67,10 +65,14 @@ public class Solution {
     }
 
     static class Region {
-        int size;
+        private int size;
 
         public void includePoint() {
             size++;
+        }
+
+        public int getSize() {
+            return size;
         }
     }
 
